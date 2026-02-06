@@ -18,33 +18,40 @@ const createMenuitem = async (req, res) => {
     active
   } = req.body
 
-  if (!title || title.trim() === '') {
-    throw new BadRequestError('Title is required')
-  }
+
+  if (!title || title.trim() === '') 
+    throw new BadRequestError('Title required')
+  if(!categoryId) 
+    throw new BadRequestError('Category required')
+  if(!milkId) 
+    throw new BadRequestError('Milk required')
 
   const category = await Category.findById(categoryId)
-
   if (!category) {
     throw new NotFoundError('Category not found')
   }
+  const milk = await Milk.findById(milkId)
+  if(!milk)
+      throw new NotFoundError('Milk not found')
+  
+  const temperaturesEnum = ['NA', 'HOT', 'ICED']
+  if(temperature && !temperaturesEnum.includes(temperature))
+      throw new BadRequestError('Temperature not valid. NA, HOT, ICED')
 
+  const sugarEnum = ['NA', '0%', '25%', '50%','75%', '100%'] 
+  if(sugar &&!sugarEnum.includes(sugar))
+      throw new BadRequestError('Sugar not valid. NA, 0%, 25%, 50%, 75%, 100%')
 
-  let milk = null
-  if(milkId){
-    milk = await Milk.findById(milkId)
-    if(!milk)
-        throw new NotFoundError('Milk not found')
-  }
 
   const menuitem = await Menuitem.create({
     title,
     imageUrl,
     price,
     category: category._id,
-    milk: milk ? milk._id : null,
-    temperature,
-    sugar,
-    active: true
+    milk: milk._id, 
+    temperature: temperature ?? 'NA',
+    sugar: sugar ?? 'NA',
+    active: active ?? true
   })
 
   res.status(StatusCodes.CREATED).json({ menuitem })
@@ -52,72 +59,72 @@ const createMenuitem = async (req, res) => {
 
 
 const updateMenuitem = async (req, res) => {
-    const { id: menuitemId } = req.params
+  const { id: menuitemId } = req.params
 
-    const menuitem = await Menuitem.findById(menuitemId)
-    if (!menuitem) {
-        throw new NotFoundError('Menuitem not found')
+  const menuitem = await Menuitem.findById(menuitemId)
+  if (!menuitem) {
+      throw new NotFoundError('Menuitem not found')
+  }
+
+  const {
+    title,
+    imageUrl,
+    price,
+    categoryId,
+    milkId,
+    temperature,
+    sugar,
+    active
+  } = req.body
+
+  if(title !== undefined){
+    if (title!==undefined && title.trim() === '') {
+      throw new BadRequestError('Title cannot be empty')
     }
+    menuitem.title = title
+  }
+  
+  if(categoryId){
+    const category = await Category.findById(categoryId)
+    if (!category) 
+      throw new NotFoundError('Category not found')
+    menuitem.category = category._id
+  }
+  
+  if(milkId){
+    const milk = await Milk.findById(milkId)
+    if(!milk)
+        throw new NotFoundError('Milk not found')
 
-    const updates = req.body
+    menuitem.milk = milk._id
+  }
+  
 
-    for (const [key, value] of Object.entries(updates)) {
-        switch (key) {
-            case 'title':
-                if (value === '') {
-                    throw new BadRequestError('Title cannot be empty')
-                }
-                menuitem[key] = value
-                break
+  if(temperature){
+    const temperaturesEnum = ['NA', 'HOT', 'ICED']
+    if(!temperaturesEnum.includes(temperature))
+      throw new BadRequestError('Temperature not valid. NA, HOT, ICED')
+    menuitem.temperature = temperature
+  }
+  
+  if(sugar){
+    const sugarEnum = ['NA', '0%', '25%', '50%','75%', '100%'] 
+    if(!sugarEnum.includes(sugar))
+      throw new BadRequestError('Sugar not valid. NA, 0%, 25%, 50%, 75%, 100%')
+    menuitem.sugar = sugar
+  }
+  
+  if(imageUrl !== undefined) 
+    menuitem.imageUrl = imageUrl
 
-            case 'imageUrl':
-            case 'active':
-                menuitem[key] = value
-                break
+  if(price !== undefined && isNaN(price))
+    menuitem.price = price
+  if(active !== undefined) 
+    menuitem.active = active
 
-            case 'price':
-                menuitem.price = Number(value)
-                break
+  await menuitem.save()
 
-            case 'categoryId':
-                if (value === '') {
-                    throw new BadRequestError('Category cannot be empty')
-                }
-                const category = await Category.findById(value)
-                if (!category) 
-                    throw new NotFoundError('Category not found')
-                menuitem.category = category._id
-                break
-
-            case 'milkId':
-                if(value === ''){
-                    menuitem.milk = null
-                }
-                else {
-                    const milk = await Milk.findById(value)
-                    if (!milk) 
-                        throw new NotFoundError('Milk not found')
-                    menuitem.milk = milk._id
-                }
-                
-                break
-
-            case 'temperature':
-                menuitem.temperature = value || "FREE"
-                break
-
-            case 'sugar':
-                menuitem.sugar = value || "FREE"
-                break
-
-            default:
-                break
-        }
-    }
-
-    await menuitem.save()
-
-    res.status(StatusCodes.OK).json({ menuitem })
+  res.status(StatusCodes.OK).json({ menuitem })
 }
 
 
@@ -129,8 +136,6 @@ const getMenuitems = async (req, res) => {
     filter.category = category;
 
   const menuitems = await Menuitem.find(filter)
-    // .populate('category')
-    // .populate('milk');
     .populate({
       path: 'category',
       select: 'title -_id,'

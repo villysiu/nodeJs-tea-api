@@ -33,20 +33,23 @@ const MenuitemSchema = new mongoose.Schema(
     milk: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Milk',
-      default: null // null for no choice, ie lemonade
+      required: [true, 'Milk is required'],
     },
 
     temperature: {
       type: String,
       enum: ['NA', 'HOT', 'ICED'], 
       default: 'NA', // no choice, ie lemonade
+      required: [true, 'Temperature is required'],
     },
 
     sugar: {
       type: String,
       enum: ['NA', '0%', '25%', '50%','75%', '100%'], 
       default: 'NA',
+      required: [true, 'Sugar is required'],
     },
+
   },
   {
     timestamps: true,

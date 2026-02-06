@@ -16,7 +16,7 @@ const CategorySchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       trim: true,
-    },
+    }
   },
   {
     timestamps: true,

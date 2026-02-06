@@ -10,7 +10,7 @@ const getCategories = async (req, res) => {
 const getCategory = async (req, res) => {
   const {id: categoryId} = req.params
 
-  const category = await Category.findOne({_id: categoryId})
+  const category = await Category.findById(categoryId)
 
   if (!category) {
     throw new NotFoundError(`No category with id ${categoryId}`)

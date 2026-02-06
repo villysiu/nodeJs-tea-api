@@ -11,7 +11,7 @@ const getSizes = async (req, res) => {
 const getSize = async (req, res) => {
   const {id: sizeId} = req.params
 
-  const size = await Size.findOne(sizeId)
+  const size = await Size.findById(sizeId)
 
   if (!size) {
     throw new NotFoundError(`No size with id ${sizeId}`)
