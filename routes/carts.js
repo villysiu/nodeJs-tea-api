@@ -8,9 +8,21 @@ const {
     updateCart,
     // getCart,
 } = require('../controllers/carts')
+// const authenticateUser = require('../middleware/authentication')
+const {isOwner} = require('../middleware/authorization')
 
-router.route('/').post(createCart).get(getCarts)
 
-router.route('/:id').delete(deleteCart).patch(updateCart)
+// Authenitcated user see all his carts and can create new cart
+router.route('/')
+    .get(getCarts)
+    .post(createCart)
+
+// No single cart in frontend
+//router.get('/:id', authenticateUser, isOwner, getCart)
+
+// Authenitcated user can delte and update his own cart
+router.route('/:id')
+  .delete( isOwner(Cart), deleteCart)
+  .patch(isOwner(Cart), updateCart);
 
 module.exports = router

@@ -9,7 +9,10 @@ const {
 } = require('../controllers/menuitems')
 
 const authenticateUser = require('../middleware/authentication');
-const isAdmin = require('../middleware/authorization')
+const {isAdmin} = require('../middleware/authorization')
+
+console.log('createMenuitem:', createMenuitem)
+console.log('typeof createMenuitem:', typeof createMenuitem)
 
 //public 
 router.get("/", getMenuitems);

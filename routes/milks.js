@@ -10,7 +10,7 @@ const {
 } = require('../controllers/milks')
 
 const authenticateUser = require('../middleware/authentication');
-const isAdmin = require('../middleware/authorization')
+const {isAdmin} = require('../middleware/authorization')
 
 //public 
 router.get("/", getMilks);
