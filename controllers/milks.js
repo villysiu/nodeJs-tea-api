@@ -21,26 +21,48 @@ const getMilk = async (req, res) => {
 
 const createMilk = async (req, res) => {
   // title and price
-  const milk = await Milk.create(req.body)
+  const { title, price } = req.body
+
+  if (!title || title.trim() === '') {
+    throw new BadRequestError('Title is required')
+  }
+
+  if (price === undefined || isNaN(price)) {
+    throw new BadRequestError('Price must be a valid number')
+  }
+
+  const milk = await Milk.create({
+    title: title.trim(),
+    price: Number(price)
+  })
+
   res.status(StatusCodes.CREATED).json({ milk })
 }
 
+
 const updateMilk = async (req, res) => {
   const { id: milkId } = req.params;
-  const { title } = req.body;
+  const { title, price } = req.body;
 
-  if (title === '') {
-    throw new BadRequestError('Title field cannot be empty')
-  }
-
-  const milk = await Milk.findByIdAndUpdate(
-    milkId,
-    req.body,
-    { new: true, runValidators: true }
-  )
+  const milk = await Milk.findById(milkId)
   if (!milk) {
-    throw new NotFoundError(`No Milk with id ${milkId}`)
+    throw new NotFoundError(`No milk with id ${milkId}`)
   }
+
+  if(title !== undefined){
+    if (title.trim() === '') {
+      throw new BadRequestError('Title cannot be empty')
+    }
+    milk.title = title.trim()
+  }
+  if (price !== undefined) {
+    if (isNaN(price)) 
+      throw new BadRequestError('Price must be a number')
+
+    milk.price = Number(price)
+  }
+  await milk.save()
+  
   res.status(StatusCodes.OK).json({ milk })
 }
 
