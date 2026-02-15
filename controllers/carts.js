@@ -106,8 +106,6 @@ const updateCart = async (req, res) => {
         throw new NotFoundError('Size not found')
     unitPrice += size.price
     
-    // cart.createdBy = req.user._id
-    // cart.menuitem = menuitem._id
 
     cart.milk = milk._id
     cart.size = size._id
