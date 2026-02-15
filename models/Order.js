@@ -2,16 +2,26 @@ const mongoose = require('mongoose')
 
 const OrderSchema = new mongoose.Schema(
   {
-    status: {
-      type: String,
-      enum: ['in process', 'completed', 'cancelled'],
-      default: 'in process',
-    },
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
       required: [true, 'Please provide user'],
     },
+    total: {
+      type: Number,
+      default: 0.0,
+      min: 0,
+    },
+    // tax: { 
+    //   type: Number,
+    //   default: 0.0,
+    //   min: 0,
+    // },
+    // gratuity: {
+    //   type: Number,
+    //   default: 0.0,
+    //   min: 0,
+    // }
   },
   { timestamps: true }
 )
