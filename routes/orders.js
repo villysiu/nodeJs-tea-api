@@ -5,7 +5,7 @@ const {
     createOrder,
     deleteOrder,
     getOrders,
-    updateOrder,
+    // updateOrder,
     getOrder,
 } = require('../controllers/orders')
 
@@ -16,6 +16,6 @@ router.route('/')
 router.route('/:id')
     .get(isOwner(Order), getOrder)
     .delete(isOwner(Order), deleteOrder)
-    .patch(isOwner(Order), updateOrder)
+    // .patch(isOwner(Order), updateOrder)
 
 module.exports = router
