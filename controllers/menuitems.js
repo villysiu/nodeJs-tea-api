@@ -44,11 +44,14 @@ const createMenuitem = async (req, res) => {
   if(sugar &&!sugarEnum.includes(sugar))
       throw new BadRequestError('Sugar not valid. NA, 0%, 25%, 50%, 75%, 100%')
 
+ 
+  if (price === undefined || isNaN(price))
+    throw new BadRequestError('Price must be a number')
 
   const menuitem = await Menuitem.create({
-    title,
+    title: title.trim(),
     imageUrl,
-    price,
+    price: Number(price),
     category: category._id,
     milk: milk._id, 
     temperature,
@@ -61,12 +64,7 @@ const createMenuitem = async (req, res) => {
 
 
 const updateMenuitem = async (req, res) => {
-  const { id: menuitemId } = req.params
-
-  const menuitem = await Menuitem.findById(menuitemId)
-  if (!menuitem) {
-      throw new NotFoundError('Menuitem not found')
-  }
+  const menuitem = req.resource
 
   const {
     title,
@@ -154,31 +152,21 @@ const getMenuitems = async (req, res) => {
 
 
 const getMenuitem = async (req, res) => {
-  const { id } = req.params
-
-  const menuitem = await Menuitem.findById(id)
+  const menuitem =  await req.resource
     .populate('category', 'title -_id')
     .populate('milk', 'title price -_id')
-
-
-  if (!menuitem) {
-    throw new NotFoundError('Menuitem not found')
-  }
-
   res.status(StatusCodes.OK).json({ menuitem })
 }
 
 
+
 const deleteMenuitem = async (req, res) => {
-  const { id } = req.params
 
-  const menuitem = await Menuitem.findByIdAndDelete(id)
 
-  if (!menuitem) {
-    throw new NotFoundError('Menuitem not found')
-  }
+  const menuitem = req.resource
+  await menuitem.deleteOne()
 
-  res.status(StatusCodes.OK).json({ msg: 'Menu item deleted' })
+  res.status(StatusCodes.OK).json({ message: 'Menu item deleted' })
 }
 
 

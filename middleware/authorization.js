@@ -34,7 +34,7 @@ const isOwner = (Model) => {
             createdBy: userId,
         })
 
-        if (!item) {
+        if (!item) 
             throw new NotFoundError(`No item with id ${itemId} owned by user`)
         
     

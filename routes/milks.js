@@ -11,15 +11,16 @@ const {
 
 const authenticateUser = require('../middleware/authentication');
 const {isAdmin} = require('../middleware/authorization')
+const getResourceById = require('../middleware/validateRequest') 
 
 //public 
 router.get("/", getMilks);
-router.get("/:id", getMilk);
+router.get("/:id", getResourceById(Milk), getMilk);
 
 // admin
 router.post("/", authenticateUser, isAdmin, createMilk);
-router.patch("/:id", authenticateUser, isAdmin, updateMilk);
-router.delete("/:id", authenticateUser, isAdmin, deleteMilk);
+router.patch("/:id", authenticateUser, isAdmin, getResourceById(Milk), updateMilk);
+router.delete("/:id", authenticateUser, isAdmin, getResourceById(Milk), deleteMilk);
 
 
 module.exports = router

@@ -9,14 +9,8 @@ const getMilks = async (req, res) => {
 
 
 const getMilk = async (req, res) => {
-  const {id: milkId} = req.params
-
-  const milk = await Milk.findById(milkId)
-
-  if (!milk) {
-    throw new NotFoundError(`No milk with id ${milkId}`)
-  }
-  res.status(StatusCodes.OK).json({ milk })
+  
+  res.status(StatusCodes.OK).json({ milk: req.resource })
 }
 
 const createMilk = async (req, res) => {
@@ -41,13 +35,9 @@ const createMilk = async (req, res) => {
 
 
 const updateMilk = async (req, res) => {
-  const { id: milkId } = req.params;
+  const milk = req.resource
   const { title, price } = req.body;
 
-  const milk = await Milk.findById(milkId)
-  if (!milk) {
-    throw new NotFoundError(`No milk with id ${milkId}`)
-  }
 
   if(title !== undefined){
     if (title.trim() === '') {
@@ -67,13 +57,9 @@ const updateMilk = async (req, res) => {
 }
 
 const deleteMilk = async (req, res) => {
-  const { id: milkId } = req.params;
-
-  const milk = await Milk.findByIdAndDelete(milkId)
-  if (!milk) {
-    throw new NotFoundError(`No milk with id ${milkId}`)
-  }
-  res.status(StatusCodes.OK).send()
+  const milk = req.resource
+  await milk.deleteOne()
+  res.status(StatusCodes.OK).json({ message: 'Milk deleted successfully'})
 }
 
 module.exports = {

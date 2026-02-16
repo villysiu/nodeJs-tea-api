@@ -11,14 +11,15 @@ const {
 
 const authenticateUser = require('../middleware/authentication');
 const {isAdmin} = require('../middleware/authorization')
+const getResourceById = require('../middleware/validateRequest')
 
 //public 
 router.get("/", getCategories);
-router.get("/:id", getCategory);
+router.get("/:id", getResourceById(Category), getCategory);
 
 // admin
 router.post("/", authenticateUser, isAdmin, createCategory);
-router.patch("/:id", authenticateUser, isAdmin, updateCategory);
-router.delete("/:id", authenticateUser, isAdmin, deleteCategory);
+router.patch("/:id", authenticateUser, isAdmin, getResourceById(Category), updateCategory);
+router.delete("/:id", authenticateUser, isAdmin, getResourceById(Category), deleteCategory);
 
 module.exports = router

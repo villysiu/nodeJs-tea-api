@@ -9,14 +9,7 @@ const getSizes = async (req, res) => {
 
 
 const getSize = async (req, res) => {
-  const {id: sizeId} = req.params
-
-  const size = await Size.findById(sizeId)
-
-  if (!size) {
-    throw new NotFoundError(`No size with id ${sizeId}`)
-  }
-  res.status(StatusCodes.OK).json({ size })
+  res.status(StatusCodes.OK).json( {size: req.resource} )
 }
 
 const createSize = async (req, res) => {
@@ -40,41 +33,31 @@ const createSize = async (req, res) => {
 
 
 const updateSize = async (req, res) => {
-  const { id: sizeId } = req.params;
+  const size = req.resource
   const { title, price } = req.body;
 
-  const data = {}
   if(title !== undefined){
     if (title.trim() === '') {
       throw new BadRequestError('Title cannot be empty')
     }
-    data.title = title.trim()
+    size.title = title.trim()
   }
   if (price !== undefined) {
     if (isNaN(price)) 
       throw new BadRequestError('Price must be a number')
 
-    data.price = Number(price)
+    size.price = Number(price)
   }
-  const size = await Size.findByIdAndUpdate(
-    sizeId,
-    data,
-    { new: true, runValidators: true }
-  )
-  if (!size) {
-    throw new NotFoundError(`No Size with id ${sizeId}`)
-  }
+  await size.save()
+  
   res.status(StatusCodes.OK).json({ size })
 }
 
 const deleteSize = async (req, res) => {
-  const { id: sizeId } = req.params;
-
-  const size = await Size.findByIdAndDelete(sizeId)
-  if (!size) {
-    throw new NotFoundError(`No size with id ${sizeId}`)
-  }
-  res.status(StatusCodes.OK).send()
+  
+  const size = req.resource
+  await size.deleteOne()
+  res.status(StatusCodes.OK).json({ message: 'Size deleted successfully'})
 }
 
 module.exports = {
