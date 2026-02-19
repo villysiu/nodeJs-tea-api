@@ -9,6 +9,7 @@ const {
     getCategory,
 } = require('../controllers/categories')
 
+const Category = require('../models/Category')
 const authenticateUser = require('../middleware/authentication');
 const {isAdmin} = require('../middleware/authorization')
 const getResourceById = require('../middleware/validateRequest')

@@ -9,6 +9,8 @@ const {
     getCart,
 } = require('../controllers/carts')
 // const authenticateUser = require('../middleware/authentication')
+
+const Cart = require('../models/Cart')
 const {isOwner} = require('../middleware/authorization')
 
 

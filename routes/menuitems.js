@@ -11,16 +11,19 @@ const {
 const authenticateUser = require('../middleware/authentication');
 const {isAdmin} = require('../middleware/authorization')
 
+const Menuitem = require('../models/Menuitem')
+const getResourceById = require('../middleware/validateRequest')
+
 console.log('createMenuitem:', createMenuitem)
 console.log('typeof createMenuitem:', typeof createMenuitem)
 
 //public 
 router.get("/", getMenuitems);
-router.get("/:id", getMenuitem);
+router.get("/:id", getResourceById(Menuitem), getMenuitem);
 
 // admin
 router.post("/", authenticateUser, isAdmin, createMenuitem);
-router.patch("/:id", authenticateUser, isAdmin, updateMenuitem);
-router.delete("/:id", authenticateUser, isAdmin, deleteMenuitem);
+router.patch("/:id", authenticateUser, isAdmin, getResourceById(Menuitem), updateMenuitem);
+router.delete("/:id", authenticateUser, isAdmin, getResourceById(Menuitem), deleteMenuitem);
 
 module.exports = router

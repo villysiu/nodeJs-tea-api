@@ -9,6 +9,7 @@ const {
     getMilk,
 } = require('../controllers/milks')
 
+const Milk = require('../models/Milk')
 const authenticateUser = require('../middleware/authentication');
 const {isAdmin} = require('../middleware/authorization')
 const getResourceById = require('../middleware/validateRequest') 

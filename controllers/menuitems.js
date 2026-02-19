@@ -141,7 +141,6 @@ const getMenuitems = async (req, res) => {
 
   const menuitems = await Menuitem.find(filter)
     .populate('category', 'title -_id')
-    .populate('milk', 'title price -_id')
 
   res.status(StatusCodes.OK).json({
     menuitems,
@@ -166,7 +165,7 @@ const deleteMenuitem = async (req, res) => {
   const menuitem = req.resource
   await menuitem.deleteOne()
 
-  res.status(StatusCodes.OK).json({ message: 'Menu item deleted' })
+  res.status(StatusCodes.OK).json({ 'message': 'Menu item deleted' })
 }
 
 
