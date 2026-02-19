@@ -59,7 +59,7 @@ const updateMilk = async (req, res) => {
 const deleteMilk = async (req, res) => {
   const milk = req.resource
   await milk.deleteOne()
-  res.status(StatusCodes.OK).json({ message: 'Milk deleted successfully'})
+  res.status(StatusCodes.OK).json({ 'message': 'Milk deleted successfully'})
 }
 
 module.exports = {

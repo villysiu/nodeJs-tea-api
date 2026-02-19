@@ -53,7 +53,7 @@ const deleteCategory = async (req, res) => {
   const category = req.resource
   await category.deleteOne()
   
-  res.status(StatusCodes.OK).json({ message: 'Category deleted successfully'})
+  res.status(StatusCodes.OK).json({ 'message': 'Category deleted successfully'})
 }
 
 module.exports = {

@@ -57,7 +57,7 @@ const deleteSize = async (req, res) => {
   
   const size = req.resource
   await size.deleteOne()
-  res.status(StatusCodes.OK).json({ message: 'Size deleted successfully'})
+  res.status(StatusCodes.OK).json({ 'message': 'Size deleted successfully'})
 }
 
 module.exports = {
