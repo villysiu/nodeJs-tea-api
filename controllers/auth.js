@@ -34,7 +34,21 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json({ user , token })
 }
 
+const updateCredential = async (req, res) => {
+  const user = await User.findById(req.user.userId)
+  const {name, password} = req.body
+  
+  console.log(user)
+  user.name = name
+  user.password = password
+
+  await user.save()
+  res.status(StatusCodes.OK).json({ user })
+}
+
+
 module.exports = {
   register,
   login,
+  updateCredential
 }

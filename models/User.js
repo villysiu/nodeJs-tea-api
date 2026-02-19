@@ -30,8 +30,9 @@ const UserSchema = new mongoose.Schema({
   }
 })
 
-// hashes a user’s password before it’s saved to the database and 
+// Only hashes a user’s password before it’s saved to the database  
 UserSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   const salt = await bcrypt.genSalt(10)
   this.password = await bcrypt.hash(this.password, salt)
 })
