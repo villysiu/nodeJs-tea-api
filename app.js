@@ -24,9 +24,13 @@ const authRouter = require('./routes/auth');
 const menuitemRouter = require('./routes/menuitems');
 const milkRouter = require('./routes/milks');
 const sizeRouter = require('./routes/sizes');
+const sugarRouter = require('./routes/sugars');
+const temperatureRouter = require('./routes/temperatures');
 const categoryRouter = require('./routes/categories');
 const cartRouter = require('./routes/carts');
 const ordersRouter = require('./routes/orders');
+
+
 
 
 // error handler
@@ -59,6 +63,8 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/menuitems', menuitemRouter)
 app.use('/api/v1/milks', milkRouter)
 app.use('/api/v1/sizes', sizeRouter)
+app.use('/api/v1/sugars', sugarRouter)
+app.use('/api/v1/temperatures', temperatureRouter)
 app.use('/api/v1/categories', categoryRouter)
 app.use('/api/v1/carts', authenticateUser, cartRouter)
 app.use('/api/v1/orders', authenticateUser, ordersRouter)
