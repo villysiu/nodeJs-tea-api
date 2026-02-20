@@ -45,10 +45,14 @@ const updateCredential = async (req, res) => {
   await user.save()
   res.status(StatusCodes.OK).json({ user })
 }
+const getCurrentUser = async (req, res) => {
+  res.status(StatusCodes.OK).json({user: req.user})
+}
 
 
 module.exports = {
   register,
   login,
-  updateCredential
+  updateCredential,
+  getCurrentUser
 }
