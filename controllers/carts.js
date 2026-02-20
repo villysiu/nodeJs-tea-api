@@ -21,7 +21,11 @@ const getCarts = async (req, res) => {
     })
     .sort('updatedAt')
 
-    res.status(StatusCodes.OK).json({ carts, count: carts.length })
+    const subtotal = carts.reduce((acc, cart) => (
+        acc + cart.unitPrice * cart.quantity
+    ), 0)
+
+    res.status(StatusCodes.OK).json({ carts, count: carts.length, subtotal })
 }
 
 const getCart = async (req, res) => {
@@ -76,8 +80,7 @@ const createCart = async (req, res) => {
 }
 
 const updateCart = async (req, res) => {
-    const cartId = req.params.id;
-    
+    // all item required
     const {
         // menuitemId,
         milkId,
@@ -120,13 +123,9 @@ const updateCart = async (req, res) => {
 }
 
 const deleteCart = async (req, res) => {
-  const { id: cartId } = req.params;
-
-  const cart = await Cart.findByIdAndDelete(cartId)
-  if (!cart) {
-    throw new NotFoundError(`No cart with id ${cartId}`)
-  }
-  res.status(StatusCodes.OK).send()
+  const cart = req.resource
+  await cart.deleteOne()
+  res.status(StatusCodes.OK).json({'message': 'cart is deleted successfully'})
 }
 
 module.exports = {
