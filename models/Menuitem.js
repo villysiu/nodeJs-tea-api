@@ -28,27 +28,27 @@ const MenuitemSchema = new mongoose.Schema(
       ref: 'Category',
       required: [true, 'Category is required'],
     },
-
-
-    milk: {
+    milkId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Milk',
-      required: [true, 'Milk is required'],
+      required: [true, 'Milk id is required'],
     },
-
+    sizeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Size',
+      required: [true, 'Size id is required'],
+    },
     temperature: {
       type: String,
       enum: ['NA', 'HOT', 'ICED'], 
       default: 'HOT', // no choice, ie lemonade
-      required: [true, 'Temperature is required'],
     },
-
     sugar: {
       type: String,
       enum: ['NA', '0%', '25%', '50%','75%', '100%'], 
       default: '0%',
-      required: [true, 'Sugar is required'],
     },
+    
 
   },
   {

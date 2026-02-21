@@ -16,6 +16,7 @@ const createMenuitem = async (req, res) => {
     price,
     categoryId,
     milkId,
+    sizeId,
     temperature,
     sugar,
     active
@@ -37,6 +38,10 @@ const createMenuitem = async (req, res) => {
   if(!milk)
       throw new NotFoundError('Milk not found')
   
+  const size = await Size.findById(sizeId)
+  if(!size)
+      throw new NotFoundError('Size not found')
+  
   if(temperature && !temperaturesEnum.includes(temperature))
       throw new BadRequestError('Temperature not valid. NA, HOT, ICED')
 
@@ -54,6 +59,7 @@ const createMenuitem = async (req, res) => {
     price: Number(price),
     category: category._id,
     milk: milk._id, 
+    size: size._id,
     temperature,
     sugar,
     active
@@ -72,6 +78,7 @@ const updateMenuitem = async (req, res) => {
     price,
     categoryId,
     milkId,
+    sizeId,
     temperature,
     sugar,
     active
@@ -97,7 +104,14 @@ const updateMenuitem = async (req, res) => {
     if(!milk){
         throw new NotFoundError('Milk not found')
     }
-    menuitem.milk = milk._id
+    menuitem.milkId = milk._id
+  }
+  if(sizeId !== undefined){
+    const size = await Size.findById(sizeId)
+    if(!size){
+        throw new NotFoundError('Size not found')
+    }
+    menuitem.sizeId = size._id
   }
   
 
@@ -153,14 +167,12 @@ const getMenuitems = async (req, res) => {
 const getMenuitem = async (req, res) => {
   const menuitem =  await req.resource
     .populate('category', 'title -_id')
-    .populate('milk', 'title price -_id')
   res.status(StatusCodes.OK).json({ menuitem })
 }
 
 
 
 const deleteMenuitem = async (req, res) => {
-
 
   const menuitem = req.resource
   await menuitem.deleteOne()
