@@ -7,19 +7,19 @@ const { BadRequestError, NotFoundError } = require('../errors')
 
 const getCarts = async (req, res) => {
     const carts = await Cart.find({ createdBy: req.user.userId })
-    .populate({
-        path: 'menuitem',
-        select: 'title -_id'
-    })
-    .populate({
-      path: 'milk',
-      select: 'title -_id'
-    })
-    .populate({
-      path: 'size',
-      select: 'title -_id'
-    })
-    .sort('updatedAt')
+    // .populate({
+    //     path: 'menuitemId',
+    //     select: 'title price _id'
+    // })
+    // .populate({
+    //   path: 'milkId',
+    //   select: 'title price _id'
+    // })
+    // .populate({
+    //   path: 'sizeId',
+    //   select: 'title price _id'
+    // })
+    .sort('-updatedAt')
 
     const subtotal = carts.reduce((acc, cart) => (
         acc + cart.unitPrice * cart.quantity
@@ -36,6 +36,15 @@ const getCart = async (req, res) => {
 
 const createCart = async (req, res) => {
     console.log("creating cart")
+    console.log(req.body)
+//     {
+//   menuitemId: '69814634fd04af387993d3fa',
+//   milkId: '69814385fd04af387993d3e6',
+//   sizeId: '698142fbfd04af387993d3e4',
+//   sugar: 'NA',
+//   temperature: 'NA',
+//   quantity: 1
+// }
     const {
         menuitemId,
         milkId,
@@ -66,10 +75,10 @@ const createCart = async (req, res) => {
 
     const cart = await Cart.create({
         createdBy: req.user.userId,
-        menuitem: menuitem._id,
+        menuitemId: menuitem._id,
 
-        milk: milk._id,
-        size: size._id,
+        milkId: milk._id,
+        sizeId: size._id,
         temperature,
         sugar,
         quantity,
@@ -80,6 +89,16 @@ const createCart = async (req, res) => {
 }
 
 const updateCart = async (req, res) => {
+    console.log("update cart")
+    console.log(req.body)
+//     {
+//   cartId: '69992f2140affd8172d3bcb3',
+//   milkId: '69813e1ab60cff3582533eda',
+//   sizeId: '698142fbfd04af387993d3e4',
+//   sugar: '0%',
+//   temperature: 'HOT',
+//   quantity: 2
+// }
     // all item required
     const {
         // menuitemId,
@@ -93,13 +112,14 @@ const updateCart = async (req, res) => {
     const cart = req.resource;
 
 
-    const menuitem = await Menuitem.findById(cart.menuitem._id)
+    const menuitem = await Menuitem.findById(cart.menuitemId)
     if(!menuitem)
         throw new NotFoundError('Menuitem not found')
 
     let unitPrice = menuitem.price
 
     const milk = await Milk.findById(milkId)
+    console.log(milk)
     if(!milk)
         throw new NotFoundError('Milk not found')
     unitPrice += milk.price     
@@ -110,8 +130,8 @@ const updateCart = async (req, res) => {
     unitPrice += size.price
     
 
-    cart.milk = milk._id
-    cart.size = size._id
+    cart.milkId = milk._id
+    cart.sizeId = size._id
     cart.temperature = temperature
     cart.sugar = sugar
     cart.quantity = quantity

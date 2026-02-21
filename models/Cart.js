@@ -8,19 +8,19 @@ const CartSchema = new mongoose.Schema(
       required: [true, 'Please provide user'],
     },
 
-    menuitem: {
+    menuitemId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Menuitem',
       required: [true, 'Menuitem required'],
     },
 
-    milk: {
+    milkId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Milk',
       required: [true, 'Milk required'],
     },
 
-    size: {
+    sizeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Size',
       required: [true, 'Size required'],
