@@ -14,8 +14,6 @@ const {isAdmin} = require('../middleware/authorization')
 const Menuitem = require('../models/Menuitem')
 const getResourceById = require('../middleware/validateRequest')
 
-console.log('createMenuitem:', createMenuitem)
-console.log('typeof createMenuitem:', typeof createMenuitem)
 
 //public 
 router.get("/", getMenuitems);

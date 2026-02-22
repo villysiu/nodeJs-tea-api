@@ -6,7 +6,13 @@ const register = async (req, res) => {
   const user = await User.create({ ...req.body })
 
   const token = user.createJWT()
-  res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token })
+  res.status(StatusCodes.CREATED).json(
+    { user: {
+      userId: user._id, 
+      name: user.name, 
+      role: user.role 
+    }, 
+    token })
 }
 
 const login = async (req, res) => {
@@ -31,7 +37,12 @@ const login = async (req, res) => {
   console.log(user)
   
   const token = user.createJWT()
-  res.status(StatusCodes.OK).json({ user , token })
+  res.status(StatusCodes.OK).json({ user: {
+                                      userId: user._id, 
+                                      name: user.name, 
+                                      role: user.role 
+                                    } , 
+                                    token })
 }
 
 const updateCredential = async (req, res) => {
@@ -43,8 +54,13 @@ const updateCredential = async (req, res) => {
   user.password = password
 
   await user.save()
-  res.status(StatusCodes.OK).json({ user })
+  res.status(StatusCodes.OK).json({ user: {
+                                      userId: user._id, 
+                                      name: user.name, 
+                                      role: user.role 
+                                    } })
 }
+
 const getCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({user: req.user})
 }

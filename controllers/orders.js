@@ -9,7 +9,7 @@ const getOrders = async (req, res) => {
   console.log('see all orders without details')
   const orders = await Order.find({ createdBy: req.user.userId })
     .sort('-createdAt')
-    .select('-_id')
+
 
   res.status(StatusCodes.OK).json({ orders, count: orders.length })
 }
@@ -17,31 +17,26 @@ const getOrders = async (req, res) => {
 const getOrder = async (req, res) => {
   
   const order = req.resource
-
-  const orderDetailsData = await OrderDetails.find({ 'order': order._id})
-    .select('-_id')
-    .populate('menuitem', 'title -_id')
-    .populate('milk', 'title -_id')
-    .populate('size', 'title -_id')
-
-  const orderObject = order.toObject()
-
+  const orderDetailsData = await OrderDetails.find({ 'orderId': order._id})
+    // .select('-_id')
+    // .populate('menuitem', 'title -_id')
+    // .populate('milk', 'title -_id')
+    // .populate('size', 'title -_id')
 
 
   res.status(StatusCodes.OK).json({ 
     ...order.toObject(), 
-    orderDetails: {
+    orderDetails:
       orderDetailsData,
-      count: orderDetailsData.length
-    }
     
   })
 }
 
 const createOrder = async (req, res) => {
-  console.log(req.body)
+
   const carts = await Cart.find({'createdBy': req.user.userId})
 
+  console.log(carts)
   if(carts.length === 0)  
     throw new BadRequestError("Cart is empty" )
 
@@ -56,16 +51,18 @@ const createOrder = async (req, res) => {
   })
 
   // create orderDetails data so if crashed, it wont mess up the database withpartial data
-  const orderDetailsData = carts.map(cart => ({
-    order: order._id,
-    menuitem: cart.menuitem,
-    milk: cart.milk,
-    size: cart.size,
-    temperature: cart.temperature,
-    sugar: cart.sugar,
-    unitPrice: cart.unitPrice,
-    quantity: cart.quantity,
-  }))
+  const orderDetailsData = carts.map(cart => (
+    {
+      orderId: order._id,
+      menuitemId: cart.menuitemId,
+      milkId: cart.milkId,
+      sizeId: cart.sizeId,
+      temperature: cart.temperature,
+      sugar: cart.sugar,
+      quantity: cart.quantity,
+      unitPrice: cart.unitPrice
+    }
+  ))
 
   await OrderDetails.insertMany(orderDetailsData)
 
@@ -103,11 +100,9 @@ const deleteOrder = async (req, res) => {
   const order = req.resource
 
   await OrderDetails.deleteMany({ order: order._id })
-  await Order.findByIdAndDelete(order._id)
+  await order.deleteOne()
 
-  console.log(`Order ${order._id} and its details deleted`)
-
-  res.status(StatusCodes.OK).send()
+  res.status(StatusCodes.OK).json({'message': `Order ${order._id} and its details deleted`})
 }
 
 module.exports = {

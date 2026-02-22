@@ -118,13 +118,13 @@ const updateCart = async (req, res) => {
 
     let unitPrice = menuitem.price
 
-    const milk = await Milk.findById(milkId)
-    console.log(milk)
+    const milk = await Milk.findById(milkId || cart.milkId)
+    // console.log(milk)
     if(!milk)
         throw new NotFoundError('Milk not found')
     unitPrice += milk.price     
 
-    const size = await Size.findById(sizeId)
+    const size = await Size.findById(sizeId|| cart.sizeId)
     if(!size)
         throw new NotFoundError('Size not found')
     unitPrice += size.price
@@ -132,8 +132,9 @@ const updateCart = async (req, res) => {
 
     cart.milkId = milk._id
     cart.sizeId = size._id
-    cart.temperature = temperature
-    cart.sugar = sugar
+    cart.temperature = temperature ?? cart.temperature;
+    cart.sugar = sugar ?? cart.sugar;
+    // cart.sugar = sugar || cart.sugar
     cart.quantity = quantity
     cart.unitPrice = unitPrice
         
