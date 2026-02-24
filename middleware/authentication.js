@@ -1,6 +1,7 @@
 
 const jwt = require('jsonwebtoken')
 const { UnauthenticatedError } = require('../errors')
+const User = require('../models/User')
 
 const auth = async (req, res, next) => {
   // check header
@@ -14,13 +15,11 @@ const auth = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET)
 
-    // attach the user to the header
-    req.user =  { 
-                  userId: payload.userId, 
-                  name: payload.name, 
-                  role: payload.role 
-                }
-
+console.log('in auth', payload)
+// attach the user to the header
+    req.user = await User.findById(payload.userId)
+    
+    
     next()
 
   } catch (error) {

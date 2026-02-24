@@ -27,7 +27,7 @@ const getCarts = async (req, res) => {
 
     res.status(StatusCodes.OK).json({ carts, count: carts.length, subtotal })
 }
-
+// no use
 const getCart = async (req, res) => {
     
     const cart = req.resource

@@ -2,6 +2,11 @@ const User = require('../models/User')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, UnauthenticatedError } = require('../errors')
 
+const getCurrentUser = async (req, res) => {
+  console.log(req.user)
+  res.status(StatusCodes.OK).json({user: req.user})
+}
+
 const register = async (req, res) => {
   const user = await User.create({ ...req.body })
 
@@ -9,6 +14,7 @@ const register = async (req, res) => {
   res.status(StatusCodes.CREATED).json(
     { user: {
       userId: user._id, 
+      email: user.email,
       name: user.name, 
       role: user.role 
     }, 
@@ -39,6 +45,7 @@ const login = async (req, res) => {
   const token = user.createJWT()
   res.status(StatusCodes.OK).json({ user: {
                                       userId: user._id, 
+                                      email: user.email,
                                       name: user.name, 
                                       role: user.role 
                                     } , 
@@ -46,24 +53,24 @@ const login = async (req, res) => {
 }
 
 const updateCredential = async (req, res) => {
-  const user = await User.findById(req.user.userId)
+  const user = req.user;
   const {name, password} = req.body
   
-  console.log(user)
-  user.name = name
-  user.password = password
+  console.log("update", user)
+  if(name !== undefined){
+    if (name.trim() === '') {
+      throw new BadRequestError('User name cannot be empty')
+    }
+    user.name = name.trim()
+  }
+      // if(password)
+  //   user.password = password
 
   await user.save()
-  res.status(StatusCodes.OK).json({ user: {
-                                      userId: user._id, 
-                                      name: user.name, 
-                                      role: user.role 
-                                    } })
+  res.status(StatusCodes.OK).json({ user})
 }
 
-const getCurrentUser = async (req, res) => {
-  res.status(StatusCodes.OK).json({user: req.user})
-}
+
 
 
 module.exports = {
