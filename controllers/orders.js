@@ -7,7 +7,7 @@ const { BadRequestError, NotFoundError } = require('../errors')
 
 const getOrders = async (req, res) => {
   console.log('see all orders without details')
-  const orders = await Order.find({ createdBy: req.user.userId })
+  const orders = await Order.find({ createdBy: req.user._id })
     .sort('-createdAt')
 
 
@@ -34,7 +34,7 @@ const getOrder = async (req, res) => {
 
 const createOrder = async (req, res) => {
 
-  const carts = await Cart.find({'createdBy': req.user.userId})
+  const carts = await Cart.find({'createdBy': req.user._id})
 
   console.log(carts)
   if(carts.length === 0)  
@@ -46,7 +46,7 @@ const createOrder = async (req, res) => {
     0
   )
   const order = await Order.create({
-    createdBy: req.user.userId,
+    createdBy: req.user._id,
     total
   })
 
@@ -68,7 +68,7 @@ const createOrder = async (req, res) => {
 
 
   // delete user cart
-  await Cart.deleteMany({ createdBy: req.user.userId })
+  await Cart.deleteMany({ createdBy: req.user._id })
 
 
   res.status(StatusCodes.CREATED).json({ 

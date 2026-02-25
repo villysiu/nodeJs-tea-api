@@ -6,7 +6,7 @@ const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
 
 const getCarts = async (req, res) => {
-    const carts = await Cart.find({ createdBy: req.user.userId })
+    const carts = await Cart.find({ createdBy: req.user._id })
     // .populate({
     //     path: 'menuitemId',
     //     select: 'title price _id'
@@ -71,10 +71,10 @@ const createCart = async (req, res) => {
     if(!size)
         throw new NotFoundError('Size not found')
     unitPrice += size.price
-
+console.log('in create cart', req.user)
 
     const cart = await Cart.create({
-        createdBy: req.user.userId,
+        createdBy: req.user._id,
         menuitemId: menuitem._id,
 
         milkId: milk._id,

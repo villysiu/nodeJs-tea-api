@@ -18,14 +18,8 @@ const isOwner = (Model) => {
     return async (req, res, next) => {
         console.log('check if cart/order belonged to user')
 
-        // const {
-        //     user: { id: useId },
-        //     params: { id: cartId },
-        // } = req
-        // if(!req.user)
-        //     return res.status(401).json({message: "Unauthorized"})
         const {
-            user: { userId },
+            user: { _id: userId },
             params: { id: itemId },
         } = req
 

@@ -13,10 +13,10 @@ const register = async (req, res) => {
   const token = user.createJWT()
   res.status(StatusCodes.CREATED).json(
     { user: {
-      userId: user._id, 
-      email: user.email,
-      name: user.name, 
-      role: user.role 
+        userId: user._id, 
+        email: user.email,
+        name: user.name, 
+        role: user.role 
     }, 
     token })
 }
@@ -54,18 +54,24 @@ const login = async (req, res) => {
 
 const updateCredential = async (req, res) => {
   const user = req.user;
-  const {name, password} = req.body
-  
+  const {name, currPassword, newPassword} = req.body
+  console.log(req.body)
   console.log("update", user)
+
   if(name !== undefined){
     if (name.trim() === '') {
       throw new BadRequestError('User name cannot be empty')
     }
     user.name = name.trim()
   }
-      // if(password)
-  //   user.password = password
-
+  if(currPassword !== undefined && newPassword !== undefined){
+    const isPasswordCorrect = await user.comparePassword(currPassword)
+    if (!isPasswordCorrect) {
+      throw new UnauthenticatedError('Invalid Credentials')
+    }
+    user.password = newPassword
+  }
+// camflouage the password in pre save
   await user.save()
   res.status(StatusCodes.OK).json({ user})
 }
